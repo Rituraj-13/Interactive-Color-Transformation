@@ -11,6 +11,10 @@ function initColorChange() {
         console.log("position: ", currentMousePosition);
     
         const middle = dimension.width / 2;
+
+        // Mapping the color code as per cursor position
+        // Logic - 
+        // 0 -> 255 & for middle -> 0
         const redColor = gsap.utils.mapRange(0, middle, 255, 0, currentMousePosition);
         const blueColor = gsap.utils.mapRange(middle, dimension.width, 0, 255, currentMousePosition);
         
@@ -47,6 +51,7 @@ function initColorChange() {
         }
     });
     
+    // Resets the rectangle, color when cursor is not in the div
     rect.addEventListener("mouseleave", function () {
         gsap.to(rect, {
             backgroundColor: "white",
