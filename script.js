@@ -1,57 +1,64 @@
 var rect = document.querySelector("#rectangle");
-var header = document.querySelector("#header"); 
+var header = document.querySelector("#header");
 
-// Function to initialize the color change effect
 function initColorChange() {
-    rect.addEventListener("mousemove", function(mouseDetails) {
-        const dimension = rect.getBoundingClientRect(); // To get the exact position of the rectangle
+    rect.addEventListener("mousemove", function (mouseDetails) {
+        const dimension = rect.getBoundingClientRect();
 
-        // Current Mouse position - X-Value of the top-left corner of the rectangle.
-        const currentMousePosition = (mouseDetails.clientX - dimension.left);
-        console.log("position: ", currentMousePosition);
-    
-        const middle = dimension.width / 2;
+        const currentMousePositionOnX = mouseDetails.clientX - dimension.left;
+        const currentMousePositionOnY = mouseDetails.clientY - dimension.top;
 
-        // Mapping the color code as per cursor position
-        // Logic - 
-        // 0 -> 255 & for middle -> 0
-        const redColor = gsap.utils.mapRange(0, middle, 255, 0, currentMousePosition);
-        const blueColor = gsap.utils.mapRange(middle, dimension.width, 0, 255, currentMousePosition);
-        
-        if (currentMousePosition < middle) {
-            console.log("Left");
-    
-            // Change the background color of rect
+        const middleOfWidth = dimension.width / 2;
+        const middleOfHeight = dimension.height / 2;
+
+        const redColor = gsap.utils.mapRange(0, middleOfWidth, 255, 0, currentMousePositionOnX);
+        const blueColor = gsap.utils.mapRange(middleOfWidth, dimension.width, 0, 255, currentMousePositionOnX);
+        const opacity0 = gsap.utils.mapRange(0, middleOfHeight, 0.2, 0.5, currentMousePositionOnY);
+        const opacity1 = gsap.utils.mapRange(middleOfHeight, dimension.height, 0.5, 1, currentMousePositionOnY);
+
+        if (currentMousePositionOnX < middleOfWidth && currentMousePositionOnY < middleOfHeight) {
             gsap.to(rect, {
-                backgroundColor: `rgb(${redColor},0,0)`,
+                backgroundColor: `rgba(${redColor}, 0, 0, ${opacity0})`,
                 ease: Power4,
                 border: "5px solid blue",
             });
-    
-            // Change the color of the header
             gsap.to(header, {
-                color: `rgb(${redColor},0,0)`,
-                ease: Power4
-            });
-        } else {
-            console.log("Right");
-    
-            // Change the background color of rect
-            gsap.to(rect, {
-                backgroundColor: `rgb(0,0,${blueColor})`,
+                color: `rgba(${redColor}, 0, 0, ${opacity0})`,
                 ease: Power4,
-                border: "5px solid red"
             });
-    
-            // Change the color of the header
+        } else if (currentMousePositionOnX < middleOfWidth && currentMousePositionOnY > middleOfHeight) {
+            gsap.to(rect, {
+                backgroundColor: `rgba(${redColor}, 0, 0, ${opacity1})`,
+                ease: Power4,
+                border: "5px solid blue",
+            });
             gsap.to(header, {
-                color: `rgb(0,0,${blueColor})`,
-                ease: Power4
+                color: `rgba(${redColor}, 0, 0, ${opacity1})`,
+                ease: Power4,
+            });
+        } else if (currentMousePositionOnX > middleOfWidth && currentMousePositionOnY < middleOfHeight) {
+            gsap.to(rect, {
+                backgroundColor: `rgba(0, 0, ${blueColor}, ${opacity0})`,
+                ease: Power4,
+                border: "5px solid red",
+            });
+            gsap.to(header, {
+                color: `rgba(0, 0, ${blueColor}, ${opacity0})`,
+                ease: Power4,
+            });
+        } else if (currentMousePositionOnX > middleOfWidth && currentMousePositionOnY > middleOfHeight) {
+            gsap.to(rect, {
+                backgroundColor: `rgba(0, 0, ${blueColor}, ${opacity1})`,
+                ease: Power4,
+                border: "5px solid red",
+            });
+            gsap.to(header, {
+                color: `rgba(0, 0, ${blueColor}, ${opacity1})`,
+                ease: Power4,
             });
         }
     });
-    
-    // Resets the rectangle, color when cursor is not in the div
+
     rect.addEventListener("mouseleave", function () {
         gsap.to(rect, {
             backgroundColor: "white",
@@ -60,17 +67,10 @@ function initColorChange() {
         });
         gsap.to(header, {
             color: "Black",
-            ease: Power4
+            ease: Power4,
         });
     });
 }
 
-// Check the window size and handle accordingly
-if (window.matchMedia("(max-width: 768px)").matches) {
-    alert("Sorry, This site is designed for larger screens !!");
-    // Do not show any content, keep it hidden
-} else {
-    console.log("Large screen detected");
-    document.body.style.display = "block"; // Show content for large screens
-    initColorChange(); // Call the function to initialize the color change
-}
+document.body.style.display = "block";
+initColorChange();
